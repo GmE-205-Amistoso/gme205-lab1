@@ -63,3 +63,33 @@ invalid_lat_count = int(invalid_lat_mask.sum())
 
 print(f"\nInvalid longitude values (missing or outside -180..180): {invalid_lon_count}")
 print(f"Invalid latitude values (missing or outside -90..90): {invalid_lat_count}")
+
+# ----------------------
+# D. Bounding box (valid coordinates only)
+# ----------------------
+valid_mask = ~(invalid_lon_mask | invalid_lat_mask)
+valid_df = df.loc[valid_mask].copy()
+
+print("\nBounding Box")
+print("----------------")
+
+if len(valid_df) == 0:
+    bbox = None
+    print("No valid coordinate rows found. Bounding box cannot be computed.")
+else:
+    min_lon = valid_df["lon"].min()
+    max_lon = valid_df["lon"].max()
+    min_lat = valid_df["lat"].min()
+    max_lat = valid_df["lat"].max()
+
+    bbox = {
+        "min_lon": float(min_lon),
+        "max_lon": float(max_lon),
+        "min_lat": float(min_lat),
+        "max_lat": float(max_lat)
+    }
+
+    print(f"Min longitude: {min_lon}")
+    print(f"Min latitude: {min_lat}")
+    print(f"Max longitude: {max_lon}")
+    print(f"Max latitude: {max_lat}")
