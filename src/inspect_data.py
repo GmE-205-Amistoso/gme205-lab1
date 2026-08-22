@@ -93,3 +93,45 @@ else:
     print(f"Min latitude: {min_lat}")
     print(f"Max longitude: {max_lon}")
     print(f"Max latitude: {max_lat}")
+
+    # ----------------------
+# E. Save outputs 
+# ----------------------
+
+# Create output folder if it doesn't exist
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Build summary dictionary
+summary = {
+    "file": DATA_PATH,
+    "rows": int(num_rows),
+    "columns": int(num_cols),
+    "column_names": list(df.columns),
+    "missing_values_per_column": {k: int(v) for k, v in missing_values.items()},
+    "invalid_longitude_count": invalid_lon_count,
+    "invalid_latitude_count": invalid_lat_count,
+    "valid_coordinate_rows": int(len(valid_df)),
+    "bbox": bbox
+}
+
+# Write summary to JSON file
+with open(SUMMARY_PATH, "w", encoding="utf-8") as f:
+    json.dump(summary, f, indent=2)
+
+print(f"\nSaved summary to {SUMMARY_PATH}")
+
+# Save scatter plot of valid coordinates
+plt.figure()
+if(len(valid_df) == 0):
+    plt.title("Preview Plot (No valid coordinates to plot)")
+else:
+    plt.scatter(valid_df["lon"], valid_df["lat"])
+    plt.title("Point Preview (lon vs lat)")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+
+plt.savefig(PLOT_PATH, dpi=150, bbox_inches="tight")
+plt.close()
+
+print(f"Saved scatter plot to: {PLOT_PATH}")
+print("\n=== END OF REPORT ===")
